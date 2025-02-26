@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - Git-webapp1 (Dev)
 on:
   push:
     branches:
-      - dev  # Assuming you deploy from dev branch to dev slot
+      - uat  # Assuming you deploy from dev branch to dev slot
   workflow_dispatch:
 
 jobs:
