@@ -1,0 +1,30 @@
+name: Build and Deploy to Non-Production
+
+on:
+  push:
+    branches:
+      - QA
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'QA'
+        type: choice
+        options:
+          - dev
+          - QA
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: ${{ github.event.inputs.environment || 'QA' }}
+      app-name: 'Git-webapp1'
+      slot-name: ${{ github.event.inputs.environment || 'QA' }}
+      artifact-name: ${{ needs.build.outputs.artifact_name }}
+    secrets: inherit
