@@ -1,0 +1,30 @@
+name: Build and Deploy to Non-Production
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'pre-prod'
+        type: choice
+        options:
+          - pre-prod
+          - uat
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: ${{ github.event.inputs.environment || 'dev' }}
+      app-name: 'Git-webapp1'
+      slot-name: ${{ github.event.inputs.environment || 'dev' }}
+      artifact-name: ${{ needs.build.outputs.artifact_name }}
+    secrets: inherit
