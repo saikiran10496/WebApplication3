@@ -9,11 +9,11 @@ on:
       environment:
         description: 'Environment to deploy to'
         required: true
-        default: 'pre-prod'
+        default: 'dev'
         type: choice
         options:
-          - pre-prod
-          - uat
+          - dev
+          - QA
 
 jobs:
   build:
