@@ -1,0 +1,21 @@
+name: Build and Deploy to Production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: 'Production'
+      app-name: 'Git-webapp1'
+      slot-name: 'Production'
+      artifact-name: ${{ needs.build.outputs.artifact_name }}
+    secrets: inherit
