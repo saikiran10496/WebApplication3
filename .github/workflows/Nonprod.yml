@@ -3,7 +3,7 @@ name: Build and Deploy to Non-Production
 on:
   push:
     branches:
-      - pre-prod
+      - dev
   workflow_dispatch:
     inputs:
       environment:
