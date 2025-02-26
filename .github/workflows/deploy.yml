@@ -1,0 +1,47 @@
+name: Deploy to Azure Web App
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: "The environment to deploy to (e.g., dev, qa, prod)"
+      app-name:
+        required: true
+        type: string
+        description: "The name of the Azure Web App"
+      slot-name:
+        required: true
+        type: string
+        description: "The slot name to deploy to"
+      artifact-name:
+        required: true
+        type: string
+        description: "The name of the artifact to download"
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ inputs.app-name }}
+          slot-name: ${{ inputs.slot-name }}
+          package: .
