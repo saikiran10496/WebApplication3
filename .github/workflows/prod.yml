@@ -17,5 +17,5 @@ jobs:
       environment: 'Production'
       app-name: 'Git-webapp3'
       slot-name: 'Production'
-      artifact-name: ${{ needs.build.outputs.artifact_name }}
+      artifact-name: ${{ build.outputs.artifact_name }}
     secrets: inherit
