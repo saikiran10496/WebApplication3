@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: 'Production'
-      app-name: 'Git-webapp1'
+      app-name: 'Git-webapp3'
       slot-name: 'Production'
       artifact-name: ${{ needs.build.outputs.artifact_name }}
     secrets: inherit
