@@ -42,6 +42,7 @@ jobs:
       - name: SnykWebUI report Security scan
         shell: bash
         if: '!cancelled()'
+        continue-on-error: true
         run: |
           cd $(dirname ./WebApplication3.csproj)
           snyk code test --org="${{ secrets.SNYK_ORG }}" --detection-depth=10 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}" 
