@@ -1,0 +1,62 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: "SECURE_TOKENS"
+  - name: snyk_token
+    value: $[variables.SNYKTOKEN]
+
+steps:
+  - task: UseDotNet@2
+    displayName: "Install .NET SDK"
+    inputs:
+      packageType: "sdk"
+      version: "6.x"
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - script: | 
+      SNYK_TOKEN=$(snyk_token)
+      export SNYK_TOKEN
+
+      # Restore dependencies
+      dotnet restore
+
+      # Build the project
+      dotnet build --configuration Release
+
+      # Download and configure Snyk CLI
+      curl --compressed https://downloads.snyk.io/cli/stable/snyk-linux -o snyk
+      chmod +x ./snyk
+      mv ./snyk /usr/local/bin/
+
+      # Install snyk-to-html for report generation
+      npm install snyk-to-html -g
+
+      # Create results directory
+      mkdir -p results
+
+      # Authenticate Snyk
+      snyk auth $(SNYK_TOKEN)
+
+      # Run dependency security scan (SCA) for .NET projects
+      snyk test --all-projects --json-file-output=results/oss.json
+
+      # Run Static Code Analysis (SAST)
+      snyk code test --sarif-file-output=results/sast.sarif
+
+      # Monitor dependencies for continuous tracking
+      snyk monitor --all-projects
+
+      # Convert results to HTML
+      snyk-to-html -o results/oss.html < results/oss.json
+      snyk-to-html -o results/sast.html < results/sast.sarif
+    env:
+      SNYK_TOKEN: $(SNYK_TOKEN)
+    displayName: "Integrate SCA, SAST & Monitor using Snyk in .NET"
+
+  - publish: $(System.DefaultWorkingDirectory)/results
+    artifact: results
+    displayName: "Publish Snyk Scan Results"
