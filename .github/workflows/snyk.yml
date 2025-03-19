@@ -27,12 +27,6 @@ jobs:
       - name: Install snyk-to-html
         run: npm install snyk-to-html -g
 
-      #- name: Restore Dependencies
-       # run: dotnet restore
-
-      #- name: Build the Project
-      #  run: dotnet build --configuration Release
-
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
