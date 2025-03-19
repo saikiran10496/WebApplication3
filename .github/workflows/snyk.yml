@@ -30,26 +30,11 @@ jobs:
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-      - name: Run Dependency Security Scan (SCA)
-        run: snyk test --all-projects --json-file-output=results/oss.json
-        continue-on-error: true
-
-      - name: Run Static Code Analysis (SAST)
-        run: snyk code test --sarif-file-output=results/sast.sarif
-        continue-on-error: true
-
-      - name: Monitor Dependencies for Continuous Tracking
-        run: snyk monitor --all-projects
-        continue-on-error: true
-
-      - name: Convert Results to HTML
-        run: |
-          mkdir -p results
-          snyk-to-html -o results/oss.html < results/oss.json
-          snyk-to-html -o results/sast.html < results/sast.sarif
-
-      - name: Upload Snyk Scan Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: snyk-scan-results
-          path: results/
+      - name: SnykWebUI report Static code analysis
+            shell: bash
+            if: '!cancelled()'
+            run: |
+              snyk code test --report --detection-depth=10 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
+            env:
+              SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+              SNYK_ORG: ${{ secrets.SNYK_ORG }}
