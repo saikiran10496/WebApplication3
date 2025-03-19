@@ -38,7 +38,7 @@ jobs:
         if: '!cancelled()'
         run: |
           run: |
-            snyk code test --org="${{ secrets.SNYK_ORG }}" --report --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
+            snyk test --org="${{ secrets.SNYK_ORG }}" --report --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
         env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
          SNYK_ORG: ${{ secrets.SNYK_ORG }}
