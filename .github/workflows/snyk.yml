@@ -1,44 +1,49 @@
 name: Snyk Security Scan for .NET
-
 on:
   push:
     branches:
       - master
-
 jobs:
   security_scan:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
+      
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.x'
-
+      
+      - name: List Directory Contents
+        run: ls -la
+      
+      - name: Restore .NET Dependencies
+        run: dotnet restore
+      
       - name: Install Snyk CLI
         run: |
           curl --compressed https://downloads.snyk.io/cli/stable/snyk-linux -o snyk
           chmod +x ./snyk
           sudo mv ./snyk /usr/local/bin/
-
+      
       - name: Install snyk-to-html
         run: npm install snyk-to-html -g
-
+      
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
+      
       - name: Verify Snyk Configuration
         run: snyk config get api
-
-      - name: SnykWebUI report Static code analysis
+      
+      - name: Find Project Files
+        run: find . -name "*.csproj" -type f
+      
+      - name: SnykWebUI report Security scan
         shell: bash
         if: '!cancelled()'
         run: |
-          snyk test --org="${{ secrets.SNYK_ORG }}" --file=WebApplication3.csproj --report --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
+          snyk test --org="${{ secrets.SNYK_ORG }}" --package-manager=nuget --file=WebApplication3.csproj --report --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
         env:
-         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-         SNYK_ORG: ${{ secrets.SNYK_ORG }}
-    
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}
