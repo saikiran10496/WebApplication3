@@ -34,7 +34,7 @@ jobs:
         shell: bash
         if: '!cancelled()'
         run: |
-          snyk code test --report --detection-depth=10 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
+          snyk code test --report --detection-depth=10 --project-name="WebApplication3" --target-name="WebApplication3"
         env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
          SNYK_ORG: ${{ secrets.SNYK_ORG }}
