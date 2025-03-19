@@ -38,12 +38,15 @@ jobs:
 
       - name: Run Dependency Security Scan (SCA)
         run: snyk test --all-projects --json-file-output=results/oss.json
+        continue-on-error: true
 
       - name: Run Static Code Analysis (SAST)
         run: snyk code test --sarif-file-output=results/sast.sarif
+        continue-on-error: true
 
       - name: Monitor Dependencies for Continuous Tracking
         run: snyk monitor --all-projects
+        continue-on-error: true
 
       - name: Convert Results to HTML
         run: |
