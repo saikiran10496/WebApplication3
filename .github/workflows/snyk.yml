@@ -44,7 +44,7 @@ jobs:
         if: '!cancelled()'
         run: |
           cd $(dirname ./WebApplication3.csproj)
-          snyk code test --org="${{ secrets.SNYK_ORG }}" --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}" --continue-on-error: true
+          snyk code test --continue-on-error: true --org="${{ secrets.SNYK_ORG }}" --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}" 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           SNYK_ORG: ${{ secrets.SNYK_ORG }}
