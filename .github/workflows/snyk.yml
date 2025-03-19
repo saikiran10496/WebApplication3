@@ -30,11 +30,15 @@ jobs:
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
+      - name: Verify Snyk Configuration
+        run: snyk config get api
+
       - name: SnykWebUI report Static code analysis
         shell: bash
         if: '!cancelled()'
         run: |
-          snyk code test --report --detection-depth=10 --project-name="WebApplication3" --target-name="WebApplication3"
+          run: |
+            snyk code test --org="${{ secrets.SNYK_ORG }}" --report --detection-depth=3 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
         env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
          SNYK_ORG: ${{ secrets.SNYK_ORG }}
