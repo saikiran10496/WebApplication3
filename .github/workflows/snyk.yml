@@ -31,10 +31,11 @@ jobs:
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       - name: SnykWebUI report Static code analysis
-            shell: bash
-            if: '!cancelled()'
-            run: |
-              snyk code test --report --detection-depth=10 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
-            env:
-              SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-              SNYK_ORG: ${{ secrets.SNYK_ORG }}
+        shell: bash
+        if: '!cancelled()'
+        run: |
+          snyk code test --report --detection-depth=10 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}"
+        env:
+         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+         SNYK_ORG: ${{ secrets.SNYK_ORG }}
+    
