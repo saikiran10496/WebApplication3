@@ -1,4 +1,4 @@
-name: Snyk Security Scan for .NET
+name: Snyk Security Scan for .NET project
 on:
   push:
     branches:
