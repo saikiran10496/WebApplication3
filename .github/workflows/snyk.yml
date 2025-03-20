@@ -16,15 +16,14 @@ jobs:
           chmod +x ./snyk
           sudo mv ./snyk /usr/local/bin/
           
-      - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+      #- name: Authenticate Snyk
+       # run: snyk auth ${{ secrets.SNYK_TOKEN }}
                 
       - name: SnykWebUI report Security scan
         shell: bash
         if: '!cancelled()'
         continue-on-error: true
         run: |
-          cd $(dirname ./WebApplication3.csproj)
           snyk code test --report --org="${{ secrets.SNYK_ORG }}" --detection-depth=10 --project-name="${{ github.event.repository.name }}" --target-name="${{ github.repository }}" 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
